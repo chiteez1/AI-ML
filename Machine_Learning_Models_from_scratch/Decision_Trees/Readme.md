@@ -29,7 +29,7 @@ Where `p_i` is the probability of each class in a node.
 
 ```
 .
-├── decision_tree.py
+├── main.py
 └── README.md
 ```
 
