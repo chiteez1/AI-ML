@@ -2,63 +2,67 @@ import numpy as np
 
 np.random.seed(42)
 
+# Model class
+class KMeans:
+    def __init__(self, k: int, max_i: int) -> None:
+        self.k = k
+        self.i = max_i
+        pass
 
-# function for K-Means
-def K_means(x: np.ndarray, ln: int, k: int):
-    cl = np.empty((0, 2))  # list of centroids
-    b_cl = np.zeros((k, 2))
+    # function to generate random centroids
+    def rand_centroid(self, x: np.ndarray) -> np.ndarray:
+        cl = np.empty((0, 2))  # list of centroids
+        ln = len(x)
 
-    # choose random centroid
-    for _ in range(k):
-        rnd = np.random.randint(0, ln)
-        print(f"Random: {rnd}")
-        print(f"Random(x): {x[rnd]}")
-        cl = np.append(cl, [x[rnd]], axis=0)
-    print(f"Centroids: {cl}")
+        # choose random centroid from x
+        for _ in range(self.k):
+            rnd = np.random.randint(0, ln)
+            cl = np.append(cl, [x[rnd]], axis=0)
+        return cl
 
-    # np.all: It's used to evaluate if all the elements in an array are True. Here, cl_1 == cl[0] returns a boolean array
-    # np.array_equal: It's used to evaluate if two arrays are same and of same shape.
+    # training function
+    def fit(self, x: np.ndarray) -> dict[int, np.ndarray]:
+        # start with random
+        cl = self.rand_centroid(x)
 
-    # main loop
-    # compare and improve centroids. Stop when centroids don't move
-    # while not np.array_equal(b_cl, cl):
-    while not np.allclose(b_cl, cl):
-        d = {}  # dict to store clusters
-        # compare
-        for i in range(len(x)):
-            # calculate distance
-            # distance = np.sqrt((x1 - cx)**2 + (y1 - cy)**2)
-            di = []
-            for j in cl:
-                print(f"x[i]: {x[i]}")
-                print(f"j: {j}")
-                di.append(np.sqrt(np.sum((x[i] - j) ** 2)))
-            print(f"Di: {di}")
+        # main loop
+        # compare and improve centroids. Stop after given iterations
+        for _ in range(self.i):
+            d = {}  # dict to store clusters
 
-            # get lowest value's index
-            min_di = di.index(min(di))
+            # compare
+            for i in range(len(x)):
+                # calculate distance
+                # distance = np.sqrt((x1 - cx)**2 + (y1 - cy)**2)
+                di = []  # list to store distances from each centroid
+                for j in cl:
+                    di.append(np.sqrt(np.sum((x[i] - j) ** 2)))
 
-            # build clusters with indices
-            if min_di not in d.keys():
-                d[min_di] = [i]
-            else:
-                d[min_di].append(i)
-            print(f"Dict: {d}")
+                # get lowest value's index
+                min_di = di.index(min(di))
 
-        # calculate mean and change centroids
-        b_cl = cl.copy()
-        print(f"Old centroids: {b_cl}")
-        for i in range(k):
-            sum_x = 0
-            sum_y = 0
-            n = len(d[i])
-            for j in d[i]:
-                a, b = x[j]
-                sum_x += a
-                sum_y += b
-            cl[i] = [sum_x / n, sum_y / n]
-        print(f"New centroids: {cl}")
-    return d
+                # build clusters with indices
+                if min_di not in d.keys():
+                    d[min_di] = [i]
+                else:
+                    d[min_di].append(i)
+
+            # calculate mean and improve centroids
+            for i in range(self.k):
+                sum_x = 0
+                sum_y = 0
+                n = len(d[i])
+                for j in d[i]:
+                    a, b = x[j]
+                    sum_x += a
+                    sum_y += b
+                cl[i] = [sum_x / n, sum_y / n]
+
+        # prepare and return clusters
+        for a, b in d.items():
+            li = [x[z] for z in b]
+            d[a] = li
+        return d
 
 
 # 2 clear clusters in 2D
@@ -75,11 +79,9 @@ X = np.array(
         [7.5, 8.5],
     ]
 )
-# a, b = K_means(X, 9, 2)
-# print("For 2K:", a, b)
-a = K_means(X, len(X), 2)
-print(f"2K:{a}")
-
+a = KMeans(2, 10)
+cl = a.fit(X)
+print(f"2k: {cl}")
 
 # 3 clusters in 2D
 X = np.array(
@@ -101,5 +103,32 @@ X = np.array(
         [9.2, 1.8],
     ]
 )
-a = K_means(X, len(X), 3)
-print(f"3K: {a}")
+b = KMeans(3, 50)
+cl = b.fit(X)
+print(f"3k-b: {cl}")
+
+# Customer data: [Age, Income in thousands]
+X = np.array(
+    [
+        # Young, low income
+        [25, 30],
+        [27, 35],
+        [28, 32],
+        [26, 33],
+        [29, 37],
+        # Middle-aged, medium income
+        [35, 50],
+        [38, 55],
+        [40, 52],
+        [37, 48],
+        # Older, high income
+        [55, 80],
+        [60, 85],
+        [58, 82],
+        [62, 88],
+        [57, 81],
+    ]
+)
+c = KMeans(3, 100)
+cl = c.fit(X)
+print(f"3k-c: {cl}")
