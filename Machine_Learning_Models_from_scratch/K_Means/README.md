@@ -2,15 +2,11 @@
 
 A lightweight, from-scratch implementation of the K-Means clustering algorithm using only NumPy. No machine learning frameworks required.
 
----
-
 ## Overview
 
 This project implements K-Means clustering entirely from the ground up, without relying on libraries like scikit-learn. It's a clean, readable implementation that's great for understanding how the algorithm works under the hood — or for use in environments where heavier ML dependencies aren't practical.
 
 The algorithm groups unlabelled data points into `k` clusters by iteratively assigning each point to its nearest centroid and recalculating centroids until convergence (or until a maximum number of iterations is reached).
-
----
 
 ## How It Works
 
@@ -18,8 +14,6 @@ The algorithm groups unlabelled data points into `k` clusters by iteratively ass
 2. **Assignment** — Each data point is assigned to the nearest centroid using Euclidean distance.
 3. **Update** — Each centroid is recalculated as the mean of all points assigned to it.
 4. **Repeat** — Steps 2 and 3 repeat for a fixed number of iterations (`max_i`).
-
----
 
 ## Requirements
 
@@ -31,8 +25,6 @@ Install the dependency with:
 ```bash
 pip install numpy
 ```
-
----
 
 ## Example Usage
 
@@ -68,8 +60,6 @@ print(clusters)
     1: [array([8. , 8. ]), array([8.5, 8.2]), ...],
 }
 ```
-
----
 
 ## Built-in Examples
 
@@ -162,8 +152,6 @@ This implementation is intentionally designed for learning and clarity, not prod
 - Centroids are initialised randomly, so results can vary between runs (the seed is fixed to `42` in the examples for reproducibility).
 - The algorithm always runs for the full `max_i` iterations — there is no early stopping on convergence.
 - Currently supports 2D data points only.
-
----
 
 ## License
 
